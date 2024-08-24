@@ -1,0 +1,34 @@
+import requests
+from bs4 import BeautifulSoup
+
+url = 'https://www.formula1.com/en/results.html/2023/drivers.html'
+response = requests.get(url)
+
+if response.status_code == 200:
+    soup = BeautifulSoup(response.content, 'html.parser')
+    table = soup.find('table', class_='f1-table f1-table-with-data w-full')
+    # Extract the rows of the table
+    rows = table.find_all ('tr')
+
+    for row_id, row in enumerate(rows):
+        columns = row.find_all ('td')
+        # print(f"row={row_id}: {columns}")
+        if columns:
+            #print(columns)
+            position = columns[0].text.strip()
+            #print (position)
+            driver_name = columns[1].text.strip().split()
+            last_name = driver_name[1][:len(driver_name[1]) - 3]
+            driver_name = f"{driver_name[0]} {last_name}"
+            '''
+            hoặc
+            driver_name = columns[1].text.strip().split()
+            driver_name[1] = driver_name[1][:len(driver_name[1]) - 3]
+            driver_name = ' '.join(driver_name)
+            '''
+            #print (driver_name)
+            nationality = columns[2].text.strip('\n')
+            #print(nationality)
+            car = columns[3].text.strip()
+            pts = columns[4].text.strip()
+            print (f"Position:{position}\nDriver Name: {driver_name}\nNationality: {nationality}\nCar: {car}\nPoints: {pts}\n")
